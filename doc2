@@ -1,0 +1,17 @@
+FROM regis.censor.com:numb1/rhel7-python-kubernetes:v1.0.1 
+
+USER root
+
+
+
+WORKDIR /app
+
+
+
+COPY . .
+
+
+
+
+
+CMD [ "python", "app.py" ]

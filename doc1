@@ -1,0 +1,82 @@
+
+FROM regis.censor.com:numb1/rhel7-python-kubernetes:v1.0.1
+
+USER root
+
+
+
+WORKDIR /app
+
+
+
+COPY . .
+
+
+
+ 
+
+
+
+CMD [ "python", "app.py" ]
+
+
+
+FROM regis.censor.com:numb1/rhel7-python-dev:v1.0.3
+
+USER root
+
+
+
+WORKDIR /app
+
+
+
+COPY . .
+
+
+
+RUN rpm -ivh python2-pip-8.1.2-5.el7.noarch.rpm
+
+RUN pip install certifi-2018.4.16-py2.py3-none-any.whl 
+
+RUN pip install six-1.11.0/. 
+
+RUN pip install idna-2.6-py2.py3-none-any.whl 
+
+RUN pip install chardet-3.0.4-py2.py3-none-any.whl 
+
+RUN pip install python_dateutil-2.5.0-py2.py3-none-any.whl 
+
+RUN pip install urllib3-1.25-py2.py3-none-any.whl 
+
+RUN pip install oauthlib-2.1.0-py2.py3-none-any.whl 
+
+RUN pip install requests-2.25.0-py2.py3-none-any.whl
+
+RUN pip install requests_oauthlib-1.0.0-py2.py3-none-any.whl
+
+RUN pip install websocket_client-0.57.0-py2.py3-none-any.whl
+
+RUN pip install setuptools-40.7.3-py2.py3-none-any.whl
+
+RUN pip install PyYAML-3.13/.
+
+RUN pip install rsa-3.4.2-py2.py3-none-any.whl --no-dependencies
+
+RUN pip install pyasn1-0.4.3-py2.py3-none-any.whl --no-dependencies
+
+RUN pip install ipaddress-1.0.23-py2.py3-none-any.whl
+
+RUN pip install google_auth-1.21.2-py2.py3-none-any.whl --no-dependencies
+
+RUN pip install kubernetes-12.0.1-py2.py3-none-any.whl --no-dependencies
+
+RUN pip install Pint-0.7.2/. 
+
+RUN rpm -ivh etcd-3.2.5-1.el7.x86_64.rpm
+
+ 
+
+RUN rm -rf *.whl 
+
+RUN rm -rf *.gz

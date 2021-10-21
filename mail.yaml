@@ -1,0 +1,61 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-health-makefile
+spec:
+  template:
+    metadata:
+      labels:
+        app: cluster-health-makefile
+    spec:
+      containers:
+      - name: cluster-health-makefile
+        image: regis.censor.com:numb1/health/hc-email:v.1.7
+        imagePullPolicy: Always
+        env:
+        - name: HOST_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        volumeMounts:
+        - name: origin-etcd
+          mountPath: "/etc/etc"
+          readOnly: true
+        - name: origin-docker
+          mountPath: "/var/lib/docker"
+          readonly: true
+        - name: origin-liborigin
+          mountPath: "/var/lib/origin"
+          readonly: true
+        - name: sys-cg
+          mountPath: "/tmp/sys"
+          readonly: true
+        - name: master-mount
+          mountPath: "/tmp/master-config"
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        node-role.kubernetes.io/compute: 'true'
+      restartPolicy: Never
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: srvccensor
+      serviceAccountName: srvccensor
+      volumes:
+      - name: origin-etcd
+        hostPath:
+          path: "/etc"
+      - name: origin-docker
+        hostPath:
+          path: "/var/lib/docker"
+      - name: origin-liborigin
+        hostPath:
+          path: "/var/lib/origin"
+      - name: sys-cg
+        hostPath:
+          path: "/sys/fs/cgroup"
+      - configMap:
+          defaultMode: 420
+          name: master-config
+        name: master-mount
+

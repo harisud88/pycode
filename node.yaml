@@ -1,0 +1,59 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: cluster-node-health
+spec:
+  template:
+    metadata:
+      labels:
+        app: cluster-health
+    spec:
+      containers:
+      - name: cluster-node-health
+        image: regis.censor.com:numb1/health/hc-node:v.1.7
+        imagePullPolicy: Always
+        env:
+        - name: HOST_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        volumeMounts:
+        - name: origin-etcd
+          mountPath: "/etc/etc"
+          readOnly: true
+        - name: origin-docker
+          mountPath: "/var/lib/docker"
+          readonly: true
+        - name: origin-liborigin
+          mountPath: "/var/lib/origin"
+          readonly: true
+        - name: sys-cg
+          mountPath: "/tmp/sys"
+          readonly: true
+        - name: master-mount
+          mountPath: "/tmp/master-config"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: srvccensor
+      serviceAccountName: srvccensor
+      volumes:
+      - name: origin-etcd
+        hostPath:
+          path: "/etc"
+      - name: origin-docker
+        hostPath:
+          path: "/var/lib/docker"
+      - name: origin-liborigin
+        hostPath:
+          path: "/var/lib/origin"
+      - name: sys-cg
+        hostPath:
+          path: "/sys/fs/cgroup"
+      - configMap:
+          defaultMode: 420
+          name: master-config
+        name: master-mount
+
